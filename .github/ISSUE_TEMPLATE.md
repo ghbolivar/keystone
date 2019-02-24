@@ -3,9 +3,10 @@
 
   Please ask questions and support requests on:
   * https://stackoverflow.com/questions/tagged/keystonejs
+  * https://gitter.im/keystonejs/keystone
 
-  Join the KeystoneJS Slack for discussion with the community & contributors:
-  * https://launchpass.com/keystonejs
+  New features can be requested and voted upon on:
+  * https://productpains.com/product/keystonejs
  -->
  
 ### Expected behavior
@@ -22,7 +23,7 @@
 
 ### Steps to reproduce the actual/current behavior
 <!-- If you're describing a bug, tell us what steps to take to reproduce your bug -->
-<!-- If you're suggesting a change/improvement, explain how to reproduce the current behavior -->
+<!-- If you'resuggesting a change/improvement, explain how to reproduce the current behavior -->
 
 
 
@@ -32,5 +33,4 @@
 | Software         | Version
 | ---------------- | -------
 | Keystone         | 
-| Node.js          | 
-| Browser          | 
+| Node             | 

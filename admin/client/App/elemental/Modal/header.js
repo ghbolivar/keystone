@@ -28,7 +28,7 @@ function ModalHeader ({
 			</div>
 			{!!onClose && showCloseButton && (
 				<GlyphButton
-					cssStyles={classes.close}
+					aphroditeStyles={classes.close}
 					color="cancel"
 					glyph="x"
 					onClick={onClose}

@@ -38,7 +38,6 @@ var Keystone = function () {
 		'module root': moduleRoot,
 		'frame guard': 'sameorigin',
 		'cache admin bundles': true,
-		'handle uploads': true,
 	};
 	this._redirects = {};
 

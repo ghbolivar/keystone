@@ -3,8 +3,6 @@ var bcrypt = require('bcrypt-nodejs');
 var FieldType = require('../Type');
 var util = require('util');
 var utils = require('keystone-utils');
-var dumbPasswords = require('dumb-passwords');
-
 
 var regexChunk = {
 	digitChar: /\d/,
@@ -20,23 +18,20 @@ var detailMsg = {
 	lowChar: 'use at least one lower case character',
 	upperChar: 'use at least one upper case character',
 };
-const defaultOptions = { min: 8, max: 72, workFactor: 10, rejectCommon: true };
-
 /**
  * password FieldType Constructor
  * @extends Field
  * @api public
  */
 function password (list, path, options) {
-	// Apply default and enforced options (you can't sort on password fields)
-	options = Object.assign({}, defaultOptions, options, { nosort: false });
-
+	this.options = options;
 	this._nativeType = String;
 	this._underscoreMethods = ['format', 'compare'];
 	this._fixedSize = 'full';
-
+	// You can't sort on password fields
+	options.nosort = true;
+	this.workFactor = options.workFactor || 10;
 	password.super_.call(this, list, path, options);
-
 	for (var key in this.options.complexity) {
 		if ({}.hasOwnProperty.call(this.options.complexity, key)) {
 			if (key in regexChunk !== key in this.options.complexity) {
@@ -47,8 +42,8 @@ function password (list, path, options) {
 			}
 		}
 	}
-	if (this.options.max && this.options.max < this.options.min) {
-		throw new Error('FieldType.Password: options - maximum password length cannot be less than the minimum length.');
+	if (this.options.max <= this.options.min) {
+		throw new Error('FieldType.Password: options - min must be set at a lower value than max.');
 	}
 }
 password.properName = 'Password';
@@ -93,7 +88,7 @@ password.prototype.addToSchema = function (schema) {
 			return next();
 		}
 		var item = this;
-		bcrypt.genSalt(field.options.workFactor, function (err, salt) {
+		bcrypt.genSalt(field.workFactor, function (err, salt) {
 			if (err) {
 				return next(err);
 			}
@@ -167,48 +162,37 @@ password.prototype.compare = function (item, candidate, callback) {
  * Asynchronously confirms that the provided password is valid
  */
 password.prototype.validateInput = function (data, callback) {
-	var { min, max, complexity, rejectCommon } = this.options;
+	var detail = '';
+	var result = true;
+	var min = this.options.min;
+	var max = this.options.max || 72;
+	var complexity = this.options.complexity;
 	var confirmValue = this.getValueFromData(data, '_confirm');
 	var passwordValue = this.getValueFromData(data);
-
-	var validation = validate(passwordValue, confirmValue, min, max, complexity, rejectCommon);
-
-	utils.defer(callback, validation.result, validation.detail);
-};
-
-var validate = password.validate = function (pass, confirm, min, max, complexity, rejectCommon) {
-	var messages = [];
-
-	if (confirm !== undefined
-		&& pass !== confirm) {
-		messages.push('Passwords must match.');
+	if (confirmValue !== undefined
+		&& passwordValue !== confirmValue) {
+		detail = 'passwords must match\n';
 	}
 
-	if (min && typeof pass === 'string' && pass.length < min) {
-		messages.push('Password must be longer than ' + min + ' characters.');
+	if (min && typeof passwordValue === 'string' && passwordValue.length < min) {
+		detail += 'password must be longer than ' + min + ' characters\n';
 	}
 
-	if (max && typeof pass === 'string' && pass.length > max) {
-		messages.push('Password must not be longer than ' + max + ' characters.');
+	if (max && typeof passwordValue === 'string' && passwordValue.length > max) {
+		detail += 'password must not be longer than ' + max + ' characters\n';
 	}
 
 	for (var prop in complexity) {
-		if (complexity[prop] && typeof pass === 'string') {
-			var complexityCheck = (regexChunk[prop]).test(pass);
+		if (complexity[prop] && typeof passwordValue === 'string') {
+			var complexityCheck = (regexChunk[prop]).test(passwordValue);
 			if (!complexityCheck) {
-				messages.push(detailMsg[prop]);
+				detail += detailMsg[prop] + '\n';
 			}
 		}
 	}
+	result = detail.length === 0;
 
-	if (pass && typeof pass === 'string' && rejectCommon && dumbPasswords.check(pass)) {
-		messages.push('Password must not be a common, frequently-used password.');
-	}
-
-	return {
-		result: messages.length === 0,
-		detail: messages.join(' \n'),
-	};
+	utils.defer(callback, result, detail);
 };
 
 /**

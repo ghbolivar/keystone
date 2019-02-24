@@ -28,7 +28,7 @@ function GlyphButton ({
 
 	const icon = (
 		<Glyph
-			cssStyles={classes.glyph}
+			aphroditeStyles={classes.glyph}
 			color={glyphColor}
 			name={glyph}
 			size={glyphSize}

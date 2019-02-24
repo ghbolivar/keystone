@@ -35,22 +35,15 @@ describe('Test dependsOn and required', function () {
 				done(error);
 			}
 
-			// suppressing console log output
-			const backupLog = console.error;
-			console.error = () => null;
-
 			var newPost = new DependsOn.model({
 				title: 'new post',
-				state: 'published',
-				publishedDate: undefined,
+				state: 'published'
 			});
-
 			newPost.save(function (err) {
 				demand(err).be.a.object();
-
-				console.error = backupLog;
 				done();
 			});
+
 		});
 
 	});

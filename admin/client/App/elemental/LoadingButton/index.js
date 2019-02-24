@@ -34,7 +34,7 @@ function LoadingButton ({ children, loading, ...props }) {
 			: 0,
 	};
 
-	// render everything
+	// render all that shit
 	return (
 		<Button {...props}>
 			<span className={css(classes.spinner)} style={spinnerStyles}>

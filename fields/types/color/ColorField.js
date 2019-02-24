@@ -9,7 +9,6 @@ import {
 	InlineGroupSection as Section,
 } from '../../../admin/client/App/elemental';
 import transparentSwatch from './transparent-swatch';
-import coloredSwatch from './colored-swatch';
 import theme from '../../../admin/client/theme';
 
 const ColorField = Field.create({
@@ -62,8 +61,7 @@ const ColorField = Field.create({
 		return (this.props.value) ? (
 			<span
 				className={className}
-				style={{ color: this.props.value }}
-				dangerouslySetInnerHTML={{ __html: coloredSwatch }}
+				style={{ backgroundColor: this.props.value }}
 			/>
 		) : (
 			<span
@@ -88,7 +86,7 @@ const ColorField = Field.create({
 						/>
 					</Section>
 					<Section>
-						<Button onClick={this.handleClick} cssStyles={classes.button} data-e2e-type-color__button>
+						<Button onClick={this.handleClick} aphroditeStyles={classes.button} data-e2e-type-color__button>
 							{this.renderSwatch()}
 						</Button>
 					</Section>
@@ -137,15 +135,14 @@ const classes = {
 		marginTop: 10,
 		position: 'absolute',
 		left: 0,
-		zIndex: 500,
+		zIndex: 2,
 	},
 	swatch: {
 		borderRadius: 1,
-		boxShadow: '0 0 0 1px rgba(0,0,0,0.1)',
+		boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)',
 		display: 'block',
-		' svg': {
-			display: 'block',
-		},
+		height: '100%',
+		width: '100%',
 	},
 };
 

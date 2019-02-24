@@ -6,7 +6,7 @@ import classes from './styles';
 
 function InlineGroupSection ({
 	active,
-	cssStyles,
+	aphroditeStyles,
 	children,
 	className,
 	contiguous,
@@ -20,19 +20,19 @@ function InlineGroupSection ({
 	// A `contiguous` section must manipulate it's child directly
 	// A separate (default) section just wraps the child
 	return contiguous ? cloneElement(children, {
-		cssStyles: [
+		aphroditeStyles: [
 			classes.contiguous,
 			classes['contiguous__' + position],
 			active ? classes.active : null,
 			grow ? classes.grow : null,
-			cssStyles,
+			aphroditeStyles,
 		],
 		...props,
 	}) : (
 		<div className={css(
 			!!grow && classes.grow,
 			!!separate && classes.separate,
-			cssStyles
+			aphroditeStyles
 		)} {...props}>
 			{children}
 		</div>
